@@ -1,0 +1,99 @@
+services:
+  db:
+    image: pgvector/pgvector:pg16
+    container_name: enterprisebrain-db
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-enterprisebrain}
+      POSTGRES_USER: ${POSTGRES_USER:-enterprisebrain}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-enterprisebrain_dev_pass}
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-enterprisebrain}"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  redis:
+    image: redis:7-alpine
+    container_name: enterprisebrain-redis
+    ports:
+      - "6379:6379"
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+  minio:
+    image: minio/minio:latest
+    container_name: enterprisebrain-minio
+    command: server /data --console-address ":9001"
+    environment:
+      MINIO_ROOT_USER: ${STORAGE_ACCESS_KEY:-minioadmin}
+      MINIO_ROOT_PASSWORD: ${STORAGE_SECRET_KEY:-minioadmin}
+    ports:
+      - "9000:9000"
+      - "9001:9001"
+    volumes:
+      - minio_data:/data
+
+  api:
+    build:
+      context: .
+      dockerfile: apps/api/Dockerfile
+    container_name: enterprisebrain-api
+    command: >
+      sh -c "alembic -c apps/api/alembic.ini upgrade head &&
+             uvicorn app.main:app --host 0.0.0.0 --port 8000"
+    env_file:
+      - .env
+    environment:
+      DATABASE_URL: postgresql+psycopg://${POSTGRES_USER:-enterprisebrain}:${POSTGRES_PASSWORD:-enterprisebrain_dev_pass}@db:5432/${POSTGRES_DB:-enterprisebrain}
+      REDIS_URL: redis://redis:6379/0
+      STORAGE_ENDPOINT: http://minio:9000
+      PYTHONPATH: /app:/app/apps/api
+    ports:
+      - "8000:8000"
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+
+  worker:
+    build:
+      context: .
+      dockerfile: apps/api/Dockerfile
+    container_name: enterprisebrain-worker
+    command: celery -A app.workers.celery_app worker --loglevel=info
+    env_file:
+      - .env
+    environment:
+      DATABASE_URL: postgresql+psycopg://${POSTGRES_USER:-enterprisebrain}:${POSTGRES_PASSWORD:-enterprisebrain_dev_pass}@db:5432/${POSTGRES_DB:-enterprisebrain}
+      REDIS_URL: redis://redis:6379/0
+      STORAGE_ENDPOINT: http://minio:9000
+      PYTHONPATH: /app:/app/apps/api
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+
+  web:
+    build:
+      context: ./apps/web
+      dockerfile: Dockerfile
+    container_name: enterprisebrain-web
+    environment:
+      VITE_API_BASE_URL: http://localhost:8000/api/v1
+    ports:
+      - "5173:5173"
+    depends_on:
+      - api
+
+volumes:
+  postgres_data:
+  minio_data:

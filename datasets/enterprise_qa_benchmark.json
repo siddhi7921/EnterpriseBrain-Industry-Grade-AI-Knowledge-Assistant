@@ -1,0 +1,103 @@
+[
+  {
+    "id": "qa-01",
+    "question": "How many days of paid annual leave do full-time employees receive?",
+    "expected_answer": "Full-time employees receive 24 days of paid annual leave per calendar year.",
+    "relevant_keywords": [
+      "24 days",
+      "annual leave"
+    ],
+    "relevant_filenames": [
+      "employee-handbook.md"
+    ]
+  },
+  {
+    "id": "qa-02",
+    "question": "What is the maximum home office equipment stipend for remote employees?",
+    "expected_answer": "Remote and hybrid employees are eligible for a one-time $750 home office equipment stipend.",
+    "relevant_keywords": [
+      "$750",
+      "home office"
+    ],
+    "relevant_filenames": [
+      "employee-handbook.md"
+    ]
+  },
+  {
+    "id": "qa-03",
+    "question": "How many days per week can engineering staff work remotely under the hybrid policy?",
+    "expected_answer": "Employees may work remotely up to 3 days per week with Tuesday and Thursday designated as core collaboration days.",
+    "relevant_keywords": [
+      "3 days",
+      "Tuesday",
+      "Thursday"
+    ],
+    "relevant_filenames": [
+      "employee-handbook.md"
+    ]
+  },
+  {
+    "id": "qa-04",
+    "question": "What authentication method is required for accessing production databases?",
+    "expected_answer": "All production database access requires hardware FIDO2/WebAuthn MFA and short-lived SSH certificates via the bastion host.",
+    "relevant_keywords": [
+      "FIDO2",
+      "bastion",
+      "MFA"
+    ],
+    "relevant_filenames": [
+      "security-architecture.md"
+    ]
+  },
+  {
+    "id": "qa-05",
+    "question": "Within how many hours must a Severity-1 security incident be escalated to the CISO?",
+    "expected_answer": "Severity-1 security incidents must be reported to the Security Operations Center immediately and escalated to the CISO within 1 hour.",
+    "relevant_keywords": [
+      "Severity-1",
+      "CISO",
+      "1 hour"
+    ],
+    "relevant_filenames": [
+      "security-architecture.md"
+    ]
+  },
+  {
+    "id": "qa-06",
+    "question": "What is the API rate limit for unauthenticated login endpoints?",
+    "expected_answer": "Unauthenticated login and token endpoints are rate-limited to 30 requests per minute per client IP address.",
+    "relevant_keywords": [
+      "30 requests",
+      "rate-limited",
+      "login"
+    ],
+    "relevant_filenames": [
+      "security-architecture.md"
+    ]
+  },
+  {
+    "id": "qa-07",
+    "question": "What is the approval threshold for cloud infrastructure spend?",
+    "expected_answer": "Monthly cloud spend increases exceeding $2,500 require written approval from the VP of Engineering.",
+    "relevant_keywords": [
+      "$2,500",
+      "VP of Engineering"
+    ],
+    "relevant_filenames": [
+      "engineering-runbook.md"
+    ]
+  },
+  {
+    "id": "qa-08",
+    "question": "What is the target p95 latency SLA for the EnterpriseBrain RAG chat endpoint?",
+    "expected_answer": "The production p95 latency SLA for hybrid retrieval plus reranking is under 1,800 milliseconds.",
+    "relevant_keywords": [
+      "1,800",
+      "p95",
+      "SLA"
+    ],
+    "relevant_filenames": [
+      "engineering-runbook.md"
+    ]
+  }
+]

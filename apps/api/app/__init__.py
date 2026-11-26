@@ -1,0 +1,1 @@
+"""EnterpriseBrain FastAPI backend application."""
